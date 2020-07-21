@@ -1,28 +1,44 @@
-$(function(){
-    let boardPos; 
+$(function(){  
     const feedbackElement = $("<p id='feedback'></p>")
     const turnElement = $('<p id="turn"></pN')
+
+    let boardPos; 
     let winner = "";
+    ai.isAI = true;
     makeGrid();
 
     $("#game-container").append(feedbackElement);
     turnElement.text("Player: " + game.getTurn())
     $("#game-container").prepend(turnElement);
+    console.log(game.turn)
     $(".grid-item").on("click", function(){      
         winner = game.winCheck(game.board);
-        if(winner === ""){
-            placeElement(boardPos);
-            game.placeCoin(getRow(boardPos), getColumn(boardPos)) 
-            game.changeTurn();
-            turnElement.text("Player: " + game.getTurn())
-           
-        } 
-        placeWinText(winner, feedbackElement) 
+        if(!ai.isAI){
+            if(winner === ""){
+                placeElement(boardPos);
+                game.placeCoin(getRow(boardPos), getColumn(boardPos))           
+                ai.generateScore(game.board);
+                turnElement.text("Player: " + game.getTurn())        
+                console.log(game.board);      
+            } 
+            placeWinText(winner, feedbackElement) 
+        }else{
+            if(game.turn){
+                game.changeTurn('O');
+                placeElement(boardPos);
+                game.placeCoin(getRow(boardPos), getColumn(boardPos)) 
+                game.changeTurn();
+            }else{       
+                game.board = ai.generateScore(game.board)
+                aiPlaceElement(game.board)
+            }
+        }
+
     })
     $(".grid-item").on("mouseover", function(e){     
         boardPos = e.target.id;
     })
-    
+ 
 })
 
 function getRow(boardPos){
@@ -47,7 +63,16 @@ function placeElement(boardPos){
     let playerItem = game.turn ? '<img id="player-one" src="assets/X.png"/>' : ' <img id="player-two" src="assets/O.png"/>';
     gridItem.append(playerItem);
 }
-
+function aiPlaceElement(board){ 
+    let positions = ai.getAICoins(board);
+    console.log(positions);
+    for (let i = 0; i < positions.length; i++) {
+        console.log('.grid-item .row-'+ positions[i].row + ' .col-' + positions[i].column)
+        let gridItem = $('.grid-item, .row-'+ positions[i].row + ', .col-' + positions[i].column);
+        let aiItem = '<img id="player-one" src="assets/X.png"/>';
+        gridItem.append(aiItem)
+    }
+ }
 function placeWinText(winner, feedbackElement){
     if(winner === ""){
         feedbackElement.text("")
@@ -55,7 +80,7 @@ function placeWinText(winner, feedbackElement){
         if (winner === 'tie'){
             feedbackElement.text(`You've tied, you both equally suck!`)
         }else{
-            feedbackElement.text(`Winner is ${winner}`)
+            feedbackElement.text(`Winner is: ${winner}`)
         }
     }
 }

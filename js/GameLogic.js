@@ -1,20 +1,10 @@
 
 const playerTwo = {
     coin : "O",
-    isPlayerTwoTurn : false,
-    placeCoin : function(board, row, column){
-        board[row][column] = this.coin
-        return board
-    }
 }
 
 const playerOne = {
     coin : 'X',
-    isPlayerOneTurn : false,
-    placeCoin : function(board, row, column){
-        board[row][column] = this.coin;
-        return board;
-    }
 }
 
 const game = {
@@ -23,6 +13,7 @@ const game = {
         ['', '', ''],
         ['', '', '']
     ],
+    turn : true,
     WIN_ON : 3,
     positionCheck : function(positionOne, positionTwo, positionThree){
         return positionOne === positionTwo && positionTwo === positionThree && positionOne != '';
@@ -55,14 +46,16 @@ const game = {
         return winner;
     },
     getTurn : function(){
-        if(playerOne.isPlayerOneTurn){
-            return true
-        }else if (playerTwo.isPlayerTwoTurn){
-            return false
-        }
+        let coin
+        this.turn ? coin = playerOne.coin : coin = playerTwo.coin;
+        return coin;
     },
     changeTurn : function(){
-        !playerOne.isPlayerOneTurn ? playerTwo.isPlayerTwoTurn = true : playerOne.isPlayerOneTurn = true;
+        this.turn = !this.turn
+        return this.turn;
+    },
+    placeCoin : function(row, column){
+        this.board[row][column] = this.getTurn();
     }
 }
 console.log(game.winCheck(game.board));

@@ -40,10 +40,29 @@ const game = {
         if(this.positionCheck(board[0][2], board[1][1], board[2][0])){
             winner = board[0][2]
         }
-        if(winner === ""){
+        if(winner === "" && this.isBoardFull()){
             return "tie"
+        }else{
+            return winner;
+        }   
+    },
+    isBoardFull : function () {
+        let counter = 0;
+        let isFull = false
+        for (let x = 0; x < this.board.length; x++) {
+            const boardCols = this.board[x]     
+            for (let y = 0; y < boardCols.length; y++) {       
+                if(this.board[x][y] === '' || null){           
+                    counter++;
+                }
+                if(counter === 0){
+                    isFull = true;
+                }else{
+                    isFull = false;
+                }  
+            }
         }
-        return winner;
+        return isFull;
     },
     getTurn : function(){
         let coin
@@ -58,7 +77,7 @@ const game = {
         this.board[row][column] = this.getTurn();
     }
 }
-console.log(game.winCheck(game.board));
+console.log(game.isBoardFull());
 
 
 

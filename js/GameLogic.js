@@ -13,7 +13,10 @@ const game = {
         ['', '', ''],
         ['', '', '']
     ],
-    turn : true,
+    WIN_ON : 3,
+    turn : false,
+    currentPlayer : playerTwo.coin,
+
     positionCheck : function(positionOne, positionTwo, positionThree){
         return positionOne === positionTwo && positionTwo === positionThree && positionOne != '';
     },
@@ -85,9 +88,12 @@ const game = {
         return this.board;
     },
     placeCoin : function(row, column, coin){
-        this.board[row][column] = coin;
+        if(this.board[row][column] === ''){
+            this.board[row][column] = coin;
+            this.currentPlayer = coin;
+        }  
         return this.board;
-    }
+    },
 }
 const ai = {
     isAI : true,
@@ -97,6 +103,7 @@ const ai = {
         O : -1,
         Tie : 0
     },
+    aiCoinPos : {row : 0, col : 0},
     minimax : function (board, depth, isMaximizing) {
         if(game.winCheck(board) !== ""){
             return this.scores[game.winCheck(board)]
@@ -104,27 +111,27 @@ const ai = {
         if(isMaximizing){
             let maxScore = -Infinity;
             for (let rows = 0; rows < board.length; rows++) {
-                const newBoard = board[rows]
+                let newBoard = board[rows]
                 for (let cols = 0; cols < newBoard.length; cols++) {
                     if(board[rows][cols] === ''){
                         board[rows][cols] = this.aiCoin;
-                        let evalScore = this.minimax(board, depth - 1, false)
-                        board[rows][cols] = ''
-                        maxScore = Math.max(maxScore, evalScore)
+                        let evalScore = this.minimax(board, depth + 1, false)
+                        board[rows][cols] = '';
+                        maxScore = Math.max(evalScore, maxScore);
                     }  
                 }
             }
             return maxScore;
         }else{
-            let minScore = +Infinity;
+            let minScore = Infinity;
             for (let rows = 0; rows < board.length; rows++) {
-                const newBoard = board[rows]
+                let newBoard = board[rows]
                 for (let cols = 0; cols < newBoard.length; cols++) {
                     if(board[rows][cols] === ''){
-                        board[rows][cols] = this.aiCoin;
-                        let evalScore = this.minimax(board, depth - 1, true)
+                        board[rows][cols] = playerTwo.coin;
+                        let evalScore = this.minimax(board, depth + 1, true)
                         board[rows][cols] = ''
-                        minScore = Math.max(minScore, evalScore)
+                        minScore = Math.min(evalScore, minScore)
                     }  
                 }
             }
@@ -132,42 +139,47 @@ const ai = {
         }     
     },
     getAICoins : function(board){
-        let coinPositions = []
+        let coinPositions = {}
         for (let rows = 0; rows < board.length; rows++) {
             const newBoard = board[rows]
             for (let cols = 0; cols < newBoard.length; cols++) {
                 if(board[rows][cols] === this.aiCoin){
-                    coinPositions.push({
+                    coinPositions ={
                         row : rows,
                         column : cols
-                    })
+                    }
                 }
             }
         }
         return coinPositions;
     },
-    generateScore : function(board){
+    generateScore : function(){
         let aiScore = -Infinity;
         let move;
-        for (let rows = 0; rows < board.length; rows++) {
-            const newBoard = board[rows]
+        for (let rows = 0; rows < game.board.length; rows++) {
+            let newBoard = game.board[rows]
             for (let cols = 0; cols < newBoard.length; cols++) {
-                if(board[rows][cols] === ''){
-                    board[rows][cols] = this.aiCoin;
-                    let minimaxScore = this.minimax(board, 0, false);
-                    board[rows][cols] = ''
+                if(game.board[rows][cols] === ''){
+                    game.board[rows][cols] = this.aiCoin;
+                    let minimaxScore = this.minimax(game.board, 0, false);
+                    game.board[rows][cols] = ''
                     if (minimaxScore > aiScore){
                         aiScore = minimaxScore
                         move = {rows, cols}
+                        console.log(move);
                     }
                 }
             }
         }
-        board[move.rows][move.cols] = this.aiCoin;
-        return board;
+        if(move !== undefined){
+            this.aiCoinPos.row = move.rows;
+            this.aiCoinPos.col = move.cols 
+            console.log(move)  
+            game.placeCoin(move.rows, move.cols, this.aiCoin);
+            game.currentPlayer = playerTwo.coin;
+        }
     }
 }
-console.log(game.isBoardFull());
 
 
 

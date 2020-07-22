@@ -3,42 +3,58 @@ $(function(){
     const turnElement = $('<p id="turn"></pN')
 
     let boardPos; 
+    
     let winner = "";
     ai.isAI = true;
     makeGrid();
-
+    ai.generateScore();
+    let boardAIPos = ai.aiCoinPos.row + ai.aiCoinPos.col + 1;
+    aiPlaceElement(boardAIPos);
+    
     $("#game-container").append(feedbackElement);
     turnElement.text("Player: " + game.getTurn())
     $("#game-container").prepend(turnElement);
     console.log(game.turn)
-    $(".grid-item").on("click", function(){      
-        winner = game.winCheck(game.board);
-        if(!ai.isAI){
-            if(winner === ""){
-                placeElement(boardPos);
-                game.placeCoin(getRow(boardPos), getColumn(boardPos))           
-                ai.generateScore(game.board);
-                turnElement.text("Player: " + game.getTurn())        
-                console.log(game.board);      
-            } 
-            placeWinText(winner, feedbackElement) 
+    $(".grid-item").on("click", function(){          
+        winner = game.winCheck(game.board); 
+        console.log(game.board);
+        if(!ai.isAI){          
+            if(winner === ""){                                                   
+                game.placeCoin(getRow(boardPos), getColumn(boardPos), game.getTurn()) 
+                placeElement(boardPos); 
+                game.turn = !game.turn;             
+                turnElement.text("Player: " + game.getTurn())                     
+            }
+            placeWinText(winner, feedbackElement)                     
         }else{
-            if(game.turn){
-                game.changeTurn('O');
+            // if(game.currentPlayer === playerOne.coin){
+            //     game.placeCoin(getRow(boardPos), getColumn(boardPos), game.getTurn())
+            //     placeElement(boardPos); 
+            //     turnElement.text("Player: " + game.getTurn())    
+            //     game.turn = !game.turn; 
+            //     console.log(game.turn);        
+            // }else{
+            //     aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col)
+            //     game.currentPlayer = ai.aiCoin             
+            //     ai.generateScore();
+            // }
+            let r = getRow(boardPos), c = getColumn(boardPos);
+            if(game.board[r][c] === ''){
+                game.placeCoin(getRow(boardPos), getColumn(boardPos), playerTwo.coin)
                 placeElement(boardPos);
-                game.placeCoin(getRow(boardPos), getColumn(boardPos)) 
-                game.changeTurn();
-            }else{       
-                game.board = ai.generateScore(game.board)
-                aiPlaceElement(game.board)
+                game.currentPlayer = ai.aiCoin;
+                boardAIPos = ai.aiCoinPos.row + ai.aiCoinPos.col + 1;
             }
         }
-
+        console.log(winner)
     })
     $(".grid-item").on("mouseover", function(e){     
         boardPos = e.target.id;
+        ai.generateScore();
+        console.log(ai.aiCoinPos);
+        console.log(boardAIPos);
+        aiPlaceElement(boardAIPos);    
     })
- 
 })
 
 function getRow(boardPos){
@@ -60,18 +76,16 @@ function makeGrid(rows = 3, cols = 3){
 }
 function placeElement(boardPos){
     let gridItem = $(`#${boardPos}`);
-    let playerItem = game.turn ? '<img id="player-one" src="assets/X.png"/>' : ' <img id="player-two" src="assets/O.png"/>';
+    let playerItem = game.turn ? '<img id="player-one" src="assets/X.png"/>'
+     : ' <img id="player-two" src="assets/O.png"/>';     
     gridItem.append(playerItem);
 }
-function aiPlaceElement(board){ 
-    let positions = ai.getAICoins(board);
-    console.log(positions);
-    for (let i = 0; i < positions.length; i++) {
-        console.log('.grid-item .row-'+ positions[i].row + ' .col-' + positions[i].column)
-        let gridItem = $('.grid-item, .row-'+ positions[i].row + ', .col-' + positions[i].column);
-        let aiItem = '<img id="player-one" src="assets/X.png"/>';
-        gridItem.append(aiItem)
-    }
+function aiPlaceElement(boardPos){ 
+    let aiItem = $('<img id="ai-player" src="assets/X.png"/>');
+    let gridItem = $('#'+boardPos);  
+    console.log(gridItem)
+    gridItem.append(aiItem)          
+    
  }
 function placeWinText(winner, feedbackElement){
     if(winner === ""){

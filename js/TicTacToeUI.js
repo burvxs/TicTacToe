@@ -6,63 +6,21 @@ $(function(){
     
     let winner = "";
     makeGrid();
-    gameLoop(winner);
+
     $("#game-container").append(feedbackElement);
     turnElement.text("Player: " + game.getTurn())
     $("#game-container").prepend(turnElement);
 
     $(".grid-item").on("click", function(){          
         if(!ai.isAI){ 
-            winner = game.winCheck(game.board);    
-            if(winner === ""){  
-                if(!isNaN(boardPos)) {
-                    game.placeCoin(getRow(boardPos), getColumn(boardPos), game.getTurn()) 
-                    placeElement(boardPos);  
-                }                                                   
-                game.turn = !game.turn;             
-                turnElement.text("Player: " + game.getTurn())                     
-            }else{
-                placeWinText(winner, feedbackElement); 
-                setTimeout(function () { 
-                    clearBoardUI();
-                    game.clearBoard();
-                    feedbackElement.text("")
-                }, 2500)
-            }                                    
+            oneVsOneGame(boardPos) 
+            turnElement.text("Player: " + game.getTurn())                                    
         }else{ 
-            game.changeTurn('O')
-            winner = game.winCheck(game.board); 
-            console.log(game.board);        
-            if(game.currentPlayer === playerTwo.coin){
-                if(!isNaN(boardPos)){
-                    let r = getRow(boardPos), c = getColumn(boardPos);
-                    if(game.board[r][c] === ''){
-                        if(winner === ''){
-                            game.placeCoin(getRow(boardPos), getColumn(boardPos), playerTwo.coin)
-                            placeElement(boardPos);
-                            game.currentPlayer = ai.aiCoin;              
-                            ai.generateScore();
-                            aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
-                        }else{
-                            placeWinText(winner, feedbackElement);
-                            setTimeout(function () { 
-                                clearBoardUI();
-                                game.clearBoard();
-                                feedbackElement.text("")
-                            }, 2500)
-                        }
-                    }  
-                }
-            }
+            aiGameOnClick(boardPos);     
         }
-        console.log(winner)
     })
     $(".grid-item").on("mouseover", function(e){    
         boardPos = parseInt(e.target.id);     
-    })
-    $(".grid-item").bind("DOMNodeInserted", function(){
-        console.log(winner);
-
     })
     $("#ai-switch").on("change", function(e){
         ai.isAI = e.target.checked;      
@@ -72,16 +30,76 @@ $(function(){
             game.clearBoard();
             clearBoardUI();
             turnElement.text(originalTurnText)
+            feedbackElement.text("")
+            winner = ""
         }
     })
+    const MIMIC_FPS = 33
+
+    let gameLoop = setInterval(onTick, MIMIC_FPS);
+
+    function onTick(){
+        winner = game.winCheck(game.board);
+        if(game.currentPlayer === ai.aiCoin && ai.isAI){
+            ai.generateScore();
+            aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
+        }
+        if(winner !== ''){
+            feedbackElement.text(`Winner is: ${winner}`);
+            if(winner === 'tie'){
+                feedbackElement.text(`You've tied, you both equally suck!`);
+            }
+            setTimeout(function(){
+                game.clearBoard();
+                clearBoardUI();   
+                winner = ""   
+                startAi();             
+                feedbackElement.text("");
+            }, 1000)
+        }
+    }
 })
+
 function startAi(){
     if(ai.isAI){
         game.clearBoard();
+        console.log(game.board);
         clearBoardUI();
         game.currentPlayer = ai.aiCoin;
         ai.generateScore();
         aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
+    }
+}
+function oneVsOneGame(boardPosition){
+    winner = game.winCheck(game.board);    
+    if(winner === ""){  
+        if(!isNaN(boardPosition)) {
+            game.placeCoin(getRow(boardPosition), getColumn(boardPosition), game.getTurn()) 
+            placeElement(boardPosition);  
+        }                                                   
+        game.turn = !game.turn;                              
+    }else{
+        setTimeout(function () { 
+            clearBoardUI();
+            game.clearBoard();
+            feedbackElement.text("")
+        }, 1000)
+    }  
+}
+function aiGameOnClick(boardPosition){  
+    game.changeTurn('O')
+    if(game.currentPlayer === playerTwo.coin){
+        if(!isNaN(boardPosition)){
+            let r = getRow(boardPosition), c = getColumn(boardPosition);
+            if(game.board[r][c] === ''){
+                winner = game.winCheck(game.board); 
+                if(winner === ''){
+                    game.placeCoin(getRow(boardPosition), getColumn(boardPosition), playerTwo.coin)
+                    placeElement(boardPosition);
+                    game.currentPlayer = ai.aiCoin;              
+                }
+            }  
+        }
     }
 }
 function getRow(boardPos){
@@ -122,36 +140,7 @@ function placeElement(boardPos){
     let aiItem = $('<img id="ai-player" src="assets/X.png"/>');
     let gridItem = $(`.row-${row}.col-${col}`);
     let itemChild = gridItem.children().length;
-    console.log(gridItem)
     if (itemChild < 1){
         gridItem.append(aiItem) 
     }
  }
-function placeWinText(winner, feedbackElement){
-    if(winner === ""){
-        feedbackElement.text("")
-    }else{
-        if (winner === 'tie'){
-            feedbackElement.text(`You've tied, you both equally suck!`)
-        }else{
-            feedbackElement.text(`Winner is: ${winner}`)
-        }
-    }
-}
-function gameLoop(winner){
-    if(winner === ''){
-        setInterval(function(){
-            onWin(winner)
-        }, 100)
-    }else{
-        clearInterval(onWin)
-    }
-}
-function onWin(winner){
-    if(winner !== ''){
-        placeWinText(winner, feedbackElement);
-        game.clearBoard();
-        clearBoardUI();
-    }
-}
-

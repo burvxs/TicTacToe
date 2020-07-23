@@ -40,6 +40,7 @@ $(function(){
     })
     const MIMIC_FPS = 33
 
+    // Game Loop 
     setInterval(onTick, MIMIC_FPS);
 
     function onTick(){

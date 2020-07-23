@@ -16,6 +16,7 @@ const game = {
     WIN_ON : 3,
     turn : false,
     currentPlayer : playerTwo.coin,
+    isBoardEmpty : false,
 
     positionCheck : function(positionOne, positionTwo, positionThree){
         return positionOne === positionTwo && positionTwo === positionThree && positionOne != '';
@@ -73,6 +74,7 @@ const game = {
                 this.board[x][y] = '';
             }
         }
+        this.isBoardEmpty = true;
     },
     getTurn : function(){
         let coin
@@ -98,6 +100,24 @@ const game = {
             this.turn = false;
         }
         return this.turn;
+    },
+    isBoardEmpty : function (){
+        let isEmpty = false;
+        for (let rows = 0; rows < this.board.length; rows++) {
+            let newBoard = this.board[rows]
+            for (let cols = 0; cols < newBoard.length; cols++) {
+                let emptySpotCounter = 0;
+                if(this.board[rows][cols] === ''){
+                    emptySpotCounter++;
+                }else if(emptySpotCounter >= (this.board.length + this.board.length - 1)){
+                    isEmpty = true;
+                }else{
+                    isEmpty = false;
+                }
+            }
+        }
+
+         return isEmpty
     },
     placeCoin : function(row, column){
         this.board[row][column] = this.getTurn();

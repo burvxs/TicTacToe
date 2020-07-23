@@ -71,6 +71,14 @@ const game = {
         this.turn ? coin = playerOne.coin : coin = playerTwo.coin;
         return coin;
     },
+    getAiTurn : function(){
+        let coin = this.currentPlayer;
+        if (coin === ai.aiCoin){
+            return coin
+        }else{
+            return coin
+        }
+    },
     changeTurn : function(){
         this.turn = !this.turn
         return this.turn;
@@ -96,7 +104,7 @@ const game = {
     },
 }
 const ai = {
-    isAI : true,
+    isAI : false,
     aiCoin : 'X',
     scores : {
         X : 1,
@@ -155,29 +163,26 @@ const ai = {
     },
     generateScore : function(){
         let aiScore = -Infinity;
-        let move;
+        let move = {rows : 0, cols : 0};
         for (let rows = 0; rows < game.board.length; rows++) {
             let newBoard = game.board[rows]
             for (let cols = 0; cols < newBoard.length; cols++) {
                 if(game.board[rows][cols] === ''){
                     game.board[rows][cols] = this.aiCoin;
-                    let minimaxScore = this.minimax(game.board, 0, false);
+                    let minimaxScore = this.minimax(game.board, 10, false);
                     game.board[rows][cols] = ''
                     if (minimaxScore > aiScore){
                         aiScore = minimaxScore
                         move = {rows, cols}
-                        console.log(move);
                     }
                 }
             }
         }
-        if(move !== undefined){
-            this.aiCoinPos.row = move.rows;
-            this.aiCoinPos.col = move.cols 
-            console.log(move)  
-            game.placeCoin(move.rows, move.cols, this.aiCoin);
-            game.currentPlayer = playerTwo.coin;
-        }
+        this.aiCoinPos.row = move.rows;
+        this.aiCoinPos.col = move.cols 
+        console.log(move)  
+        game.placeCoin(move.rows, move.cols, this.aiCoin);
+        game.currentPlayer = playerTwo.coin;
     }
 }
 

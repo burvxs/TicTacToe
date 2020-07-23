@@ -20,7 +20,11 @@ $(function(){
         }
     })
     $(".grid-item").on("mouseover", function(e){    
-        boardPos = parseInt(e.target.id);     
+        boardPos = parseInt(e.target.id); 
+        onMouseEnterItem(boardPos)
+    })
+    $(".grid-item").mouseleave(function(){
+        $(this).css("background-color", "black")
     })
     $("#ai-switch").on("change", function(e){
         ai.isAI = e.target.checked;      
@@ -36,7 +40,7 @@ $(function(){
     })
     const MIMIC_FPS = 33
 
-    let gameLoop = setInterval(onTick, MIMIC_FPS);
+    setInterval(onTick, MIMIC_FPS);
 
     function onTick(){
         winner = game.winCheck(game.board);
@@ -49,17 +53,25 @@ $(function(){
             if(winner === 'tie'){
                 feedbackElement.text(`You've tied, you both equally suck!`);
             }
-            setTimeout(function(){
-                game.clearBoard();
-                clearBoardUI();   
-                winner = ""   
-                startAi();             
+            startAi(); 
+            setTimeout(function(){ 
+                winner = ""        
                 feedbackElement.text("");
             }, 1000)
+            
         }
     }
 })
-
+function onMouseEnterItem(boardPosition){
+    if(!isNaN(boardPosition)){
+        let row = getRow(boardPosition), col = getColumn(boardPosition)
+        if(game.board[row][col] === ''){
+            $("#"+boardPosition).css("background-color", "#303030");
+        }else{
+            $("#"+boardPosition).css("background-color", "black");
+        }
+    }
+}
 function startAi(){
     if(ai.isAI){
         game.clearBoard();
@@ -78,20 +90,14 @@ function oneVsOneGame(boardPosition){
             placeElement(boardPosition);  
         }                                                   
         game.turn = !game.turn;                              
-    }else{
-        setTimeout(function () { 
-            clearBoardUI();
-            game.clearBoard();
-            feedbackElement.text("")
-        }, 1000)
-    }  
+    } 
 }
 function aiGameOnClick(boardPosition){  
     game.changeTurn('O')
     if(game.currentPlayer === playerTwo.coin){
         if(!isNaN(boardPosition)){
-            let r = getRow(boardPosition), c = getColumn(boardPosition);
-            if(game.board[r][c] === ''){
+            let row = getRow(boardPosition), column = getColumn(boardPosition);
+            if(game.board[row][column] === ''){
                 winner = game.winCheck(game.board); 
                 if(winner === ''){
                     game.placeCoin(getRow(boardPosition), getColumn(boardPosition), playerTwo.coin)

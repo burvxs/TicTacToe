@@ -5,7 +5,6 @@ $(function(){
     let boardPos; 
     
     let winner = "";
-    //ai.isAI = true;
     makeGrid();
     gameLoop(winner);
     $("#game-container").append(feedbackElement);
@@ -15,41 +14,55 @@ $(function(){
     $(".grid-item").on("click", function(){          
         if(!ai.isAI){ 
             winner = game.winCheck(game.board);    
-            if(winner === ""){                                                   
-                game.placeCoin(getRow(boardPos), getColumn(boardPos), game.getTurn()) 
-                placeElement(boardPos); 
+            if(winner === ""){  
+                if(!isNaN(boardPos)) {
+                    game.placeCoin(getRow(boardPos), getColumn(boardPos), game.getTurn()) 
+                    placeElement(boardPos);  
+                }                                                   
                 game.turn = !game.turn;             
                 turnElement.text("Player: " + game.getTurn())                     
-            }
-            placeWinText(winner, feedbackElement)                     
+            }else{
+                placeWinText(winner, feedbackElement); 
+                setTimeout(function () { 
+                    clearBoardUI();
+                    game.clearBoard();
+                    feedbackElement.text("")
+                }, 2500)
+            }                                    
         }else{ 
             game.changeTurn('O')
-            winner = game.winCheck(game.board);         
+            winner = game.winCheck(game.board); 
+            console.log(game.board);        
             if(game.currentPlayer === playerTwo.coin){
-                let r = getRow(boardPos), c = getColumn(boardPos);
-                console.log(r);
-                if(game.board[r][c] === ''){
-                    if(winner === ''){
-                        game.placeCoin(getRow(boardPos), getColumn(boardPos), playerTwo.coin)
-                        placeElement(boardPos);
-                        game.currentPlayer = ai.aiCoin;              
-                        ai.generateScore();
-                        aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);  
-                    }
+                if(!isNaN(boardPos)){
+                    let r = getRow(boardPos), c = getColumn(boardPos);
+                    if(game.board[r][c] === ''){
+                        if(winner === ''){
+                            game.placeCoin(getRow(boardPos), getColumn(boardPos), playerTwo.coin)
+                            placeElement(boardPos);
+                            game.currentPlayer = ai.aiCoin;              
+                            ai.generateScore();
+                            aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
+                        }else{
+                            placeWinText(winner, feedbackElement);
+                            setTimeout(function () { 
+                                clearBoardUI();
+                                game.clearBoard();
+                                feedbackElement.text("")
+                            }, 2500)
+                        }
+                    }  
                 }
-                aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
-                placeWinText(winner, feedbackElement);
             }
         }
         console.log(winner)
     })
     $(".grid-item").on("mouseover", function(e){    
-        boardPos = e.target.id;             
+        boardPos = parseInt(e.target.id);     
     })
     $(".grid-item").bind("DOMNodeInserted", function(){
-        if(winner !== ''){
-            
-        }
+        console.log(winner);
+
     })
     $("#ai-switch").on("change", function(e){
         ai.isAI = e.target.checked;      
@@ -72,14 +85,18 @@ function startAi(){
     }
 }
 function getRow(boardPos){
-    let cell = $("#"+boardPos);
-    console.log(cell.children());
-    console.log(cell.children().length);
-    if(cell.children().length == 0)
+    console.log(boardPos)
+    if(!isNaN(boardPos)){
+        let cell = $("#"+boardPos);
+        console.log(cell);
         return parseInt(cell.attr("class").split(' ')[1].replace(/\D/g, ""));
+    }
 }
 function getColumn(boardPos){
-    return parseInt($("#"+boardPos).attr("class").split(' ')[2].replace(/\D/g, ""));
+    if(!isNaN(boardPos)){
+        let cell = $("#"+boardPos);
+        return parseInt(cell.attr("class").split(' ')[2].replace(/\D/g, ""));
+    }
 }
 function clearBoardUI(){
     $(".grid-item").empty();

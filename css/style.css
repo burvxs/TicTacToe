@@ -1,13 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+#content{
+    position: relative;
+    bottom : 15px;
+    margin-bottom : 300px;
+}
+
 #ai-switch-text{
     position: relative;
     display: inline-block;
     font-size : 23px;
-    font-family: 'Bebas Neue', cursive;;
+    font-family: 'Bebas Neue', cursive;
     bottom : 0px;
-    top : 814px;
-    left : 1194px;
+    top : 820px;
+    left : 1200px;
 }
 .switch input {
     opacity : 0;
@@ -75,7 +81,7 @@ input:checked + .slider:before {
 #feedback{
     font-size: 50px;
     margin-left: 30px;
-    margin-top : 7px;
+    margin-top : 30px;
     font-family: 'Bebas Neue', cursive;
 }
 #ai-player{
@@ -95,8 +101,8 @@ input:checked + .slider:before {
         width : 57px;
     }
     #ai-switch-text{
-        top: 380px;
-        left: 250px;
+        top: 390px;
+        left: 260px;
     }
     .grid-item {
         display: inline-block;

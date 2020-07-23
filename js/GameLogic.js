@@ -66,6 +66,14 @@ const game = {
         }
         return isFull;
     },
+    clearBoard : function (){
+        for (let x = 0; x < this.board.length; x++) {
+            const boardCols = this.board[x]     
+            for (let y = 0; y < boardCols.length; y++){
+                this.board[x][y] = '';
+            }
+        }
+    },
     getTurn : function(){
         let coin
         this.turn ? coin = playerOne.coin : coin = playerTwo.coin;

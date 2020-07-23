@@ -89,6 +89,15 @@ input:checked + .slider:before {
 }
 
 @media only screen and (max-width: 1300px){
+    .slider {
+        top: 410px;
+        left: 347px;
+        width : 57px;
+    }
+    #ai-switch-text{
+        top: 380px;
+        left: 250px;
+    }
     .grid-item {
         display: inline-block;
         width: 50px;
@@ -112,9 +121,9 @@ input:checked + .slider:before {
         left : 20%;
     }
     #feedback{
-        font-size: 30px;
+        font-size: 23px;
         margin-left: 30px;
-        margin-top : 7px;
+        margin-top : 10px;
         font-family: 'Bebas Neue', cursive;
     }
     #turn{

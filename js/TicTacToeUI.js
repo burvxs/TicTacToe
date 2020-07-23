@@ -1,13 +1,13 @@
 $(function(){  
     const feedbackElement = $("<p id='feedback'></p>")
     const turnElement = $('<p id="turn"></p>')
-
+    const originalTurnText = "Player: " + game.getTurn(); 
     let boardPos; 
     
     let winner = "";
     //ai.isAI = true;
     makeGrid();
-
+    gameLoop(winner);
     $("#game-container").append(feedbackElement);
     turnElement.text("Player: " + game.getTurn())
     $("#game-container").prepend(turnElement);
@@ -23,9 +23,9 @@ $(function(){
             }
             placeWinText(winner, feedbackElement)                     
         }else{ 
+            game.changeTurn('O')
             winner = game.winCheck(game.board);         
             if(game.currentPlayer === playerTwo.coin){
-
                 let r = getRow(boardPos), c = getColumn(boardPos);
                 console.log(r);
                 if(game.board[r][c] === ''){
@@ -35,12 +35,9 @@ $(function(){
                         game.currentPlayer = ai.aiCoin;              
                         ai.generateScore();
                         aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);  
-                        turnElement.text("Player: " + game.getAiTurn()) 
-                        console.log(game.getAiTurn())   
-                        console.log(ai.aiCoinPos);
                     }
                 }
-                aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);   
+                aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
                 placeWinText(winner, feedbackElement);
             }
         }
@@ -49,13 +46,26 @@ $(function(){
     $(".grid-item").on("mouseover", function(e){    
         boardPos = e.target.id;             
     })
+    $(".grid-item").bind("DOMNodeInserted", function(){
+        if(winner !== ''){
+            
+        }
+    })
     $("#ai-switch").on("change", function(e){
-        ai.isAI = e.target.checked;
+        ai.isAI = e.target.checked;      
         startAi();
+        turnElement.text("HUMAN VS COMPUTER")
+        if(!ai.isAI){
+            game.clearBoard();
+            clearBoardUI();
+            turnElement.text(originalTurnText)
+        }
     })
 })
 function startAi(){
     if(ai.isAI){
+        game.clearBoard();
+        clearBoardUI();
         game.currentPlayer = ai.aiCoin;
         ai.generateScore();
         aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
@@ -70,6 +80,9 @@ function getRow(boardPos){
 }
 function getColumn(boardPos){
     return parseInt($("#"+boardPos).attr("class").split(' ')[2].replace(/\D/g, ""));
+}
+function clearBoardUI(){
+    $(".grid-item").empty();
 }
 function makeGrid(rows = 3, cols = 3){
     let i = 0;
@@ -106,6 +119,22 @@ function placeWinText(winner, feedbackElement){
         }else{
             feedbackElement.text(`Winner is: ${winner}`)
         }
+    }
+}
+function gameLoop(winner){
+    if(winner === ''){
+        setInterval(function(){
+            onWin(winner)
+        }, 100)
+    }else{
+        clearInterval(onWin)
+    }
+}
+function onWin(winner){
+    if(winner !== ''){
+        placeWinText(winner, feedbackElement);
+        game.clearBoard();
+        clearBoardUI();
     }
 }
 

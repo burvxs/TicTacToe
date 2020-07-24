@@ -68,10 +68,10 @@ $(function(){
             if(winner === 'tie'){
                 feedbackElement.text(`You've tied, you both equally suck!`);
             }
-            startAi(); 
+            
             setTimeout(function(){ 
-                winner = ""        
-                feedbackElement.text("");
+                startAi(); 
+                winner = ""                       
             }, 1000)
             
         }
@@ -115,9 +115,15 @@ function oneVsOneGame(boardPosition){
         if(!isNaN(boardPosition)) {
             game.placeCoin(getRow(boardPosition), getColumn(boardPosition), game.getTurn()) 
             placeElement(boardPosition);  
+        }else{
+            setTimeout(function (){  
+                game.clearBoard();
+                clearBoardUI();
+                feedbackElement.text("")
+            }, 2000);
         }                                                   
         game.turn = !game.turn;                              
-    } 
+    }
 }
 /*
     aiGameOnClick starts the human vs computer game

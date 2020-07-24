@@ -1,3 +1,11 @@
+/*
+    Ben Purvis 
+    GA_SEi37
+    7/24/2020
+    GameLogic javascript file containing the player, game and ai objects.
+    The UI and game logic are completely seperated from each other.
+*/
+
 
 const playerTwo = {
     coin : "O",
@@ -18,13 +26,17 @@ const game = {
     currentPlayer : playerTwo.coin,
     isBoardEmpty : false,
 
+    /* 
+        Takes three board positions as parameters and compares 
+        each location.
+    */ 
     positionCheck : function(positionOne, positionTwo, positionThree){
         return positionOne === positionTwo && positionTwo === positionThree && positionOne != '';
     },
     winCheck : function(board){
         let winner = "";
         // horizontal, rows
-        for (let row = 0; row < this.WIN_ON; row++) {
+        for (let rows = 0; rows < this.WIN_ON; rows++) {
             if(this.positionCheck(board[rows][0], board[rows][1], board[rows][2])){
                 winner = board[rows][0];
             }
@@ -81,14 +93,6 @@ const game = {
         this.turn ? coin = playerOne.coin : coin = playerTwo.coin;
         return coin;
     },
-    getAiTurn : function(){
-        let coin = this.currentPlayer;
-        if (coin === ai.aiCoin){
-            return coin
-        }else{
-            return coin
-        }
-    },
     changeTurn : function(){
         this.turn = !this.turn
         return this.turn;
@@ -100,24 +104,6 @@ const game = {
             this.turn = false;
         }
         return this.turn;
-    },
-    isBoardEmpty : function (){
-        let isEmpty = false;
-        for (let rows = 0; rows < this.board.length; rows++) {
-            let newBoard = this.board[rows]
-            for (let cols = 0; cols < newBoard.length; cols++) {
-                let emptySpotCounter = 0;
-                if(this.board[rows][cols] === ''){
-                    emptySpotCounter++;
-                }else if(emptySpotCounter >= (this.board.length + this.board.length - 1)){
-                    isEmpty = true;
-                }else{
-                    isEmpty = false;
-                }
-            }
-        }
-
-         return isEmpty
     },
     placeCoin : function(row, column){
         this.board[row][column] = this.getTurn();
@@ -132,18 +118,25 @@ const game = {
     },
 }
 const ai = {
+    /*
+        isAI is toggled when the user selects to change games.
+        All AI logic will run when isAI is set to true.
+    */
     isAI : false,
     aiCoin : 'X',
-    scores : {
-        X : 1,
-        O : -1,
-        Tie : 0
-    },
+    // AI coin positions that are passed to the UI for placement.
     aiCoinPos : {row : 0, col : 0},
+    /*
+        Heuristic function or evalulation function.
+        If the maximizing player (AI) wins the score is +10.
+        If the minimizing player (Person) wins the score is -10.
+        Calculates the value of the board depending on the placement
+        of coins on the board
+    */
     heuristic : function(board){
         // vertical, checking rows
         for (let rows = 0; rows < board.length; rows++) {
-            if(this.positionCheck(board[rows][0], board[rows][1], board[rows][2])){
+            if(game.positionCheck(board[rows][0], board[rows][1], board[rows][2])){
                 if(board[rows][0] === ai.aiCoin){
                     return +10;
                 }else if(board[rows][0] === playerTwo.coin){
@@ -153,16 +146,16 @@ const ai = {
         }
         // horizontal, checking columns
         for (let cols = 0; cols < board.length; cols++) {
-            if(this.positionCheck(board[0][cols], board[1][cols], board[2][cols])){
-                if(board[rows][0] === ai.aiCoin){
+            if(game.positionCheck(board[0][cols], board[1][cols], board[2][cols])){
+                if(board[cols][0] === ai.aiCoin){
                     return +10;
-                }else if(board[rows][0] === playerTwo.coin){
+                }else if(board[cols][0] === playerTwo.coin){
                     return -10;
                 }
             }
         }
         // diagonal top-left to bottom-right
-        if(this.positionCheck(board[0][0], board[1][1], board[2][2])){
+        if(game.positionCheck(board[0][0], board[1][1], board[2][2])){
             if(board[0][0] === ai.aiCoin){
                 return +10;
             }else if(board[0][0] === playerTwo.coin){
@@ -170,34 +163,71 @@ const ai = {
             }
         }
         // diagonal top-right to bottom-left
-        if(this.positionCheck(board[0][2], board[1][1], board[2][0])){
+        if(game.positionCheck(board[0][2], board[1][1], board[2][0])){
             if(board[0][2] === ai.aiCoin){
                 return +10;
             }else if(board[0][2] === playerTwo.coin){
                 return -10;
             }
         }
-
         return 0;
     },
-    minimax : function (board, depth, isMaximizing) {
-        if(game.winCheck(board) !== ""){
-            return this.scores[game.winCheck(board)]
+    /*
+        Checks if theres any moves left on the board
+    */
+    isMovesLeft : function (){  
+        for (let rows = 0; rows < game.board.length; rows++) {
+            let newBoard = game.board[rows]
+            for (let cols = 0; cols < newBoard.length; cols++) {
+                    if(game.board[rows][cols] === ''){
+                        return true
+                    }else{
+                        return false;
+                    }
+            }
         }
+    },
+    /*
+        MiniMax Algorithm
+        The maximizer = AI.
+        The minimizer = player.
+
+        The maximizer tries to get the highest score possible while the
+        minimizer does the opposite, getting lowest score. 
+        Every board state has a value associated with it. In a state where the
+        maximizer has an advantage the score of the board positive value, if the 
+        minimizer can win in that board state, the score is a negative value.
+
+        This method recursively calls it self on the max and min player scanning the 
+        board locations and creating a score for each player (minimizing, maximizing) based
+        on the board state.
+    */
+    minimax : function (board, depth, isMaximizing) {
+        let score = this.heuristic(board);
+        if(score === 10){
+            return score;
+        }
+        if(score === -10){
+            return score;
+        }
+        if (!this.isMovesLeft(board)){
+            return 0;
+        }
+
         if(isMaximizing){
-            let maxScore = -Infinity;
+            let maxBestScore = -Infinity;
             for (let rows = 0; rows < board.length; rows++) {
                 let newBoard = board[rows]
                 for (let cols = 0; cols < newBoard.length; cols++) {
                     if(board[rows][cols] === ''){
                         board[rows][cols] = this.aiCoin;
-                        let evalScore = this.minimax(board, depth + 1, false)
+                        let evalScore = this.minimax(board, depth + 1, false)                    
+                        maxBestScore = Math.max(maxBestScore, evalScore);
                         board[rows][cols] = '';
-                        maxScore = Math.max(evalScore, maxScore);
                     }  
                 }
             }
-            return maxScore;
+            return maxBestScore;
         }else{
             let minScore = Infinity;
             for (let rows = 0; rows < board.length; rows++) {
@@ -205,27 +235,36 @@ const ai = {
                 for (let cols = 0; cols < newBoard.length; cols++) {
                     if(board[rows][cols] === ''){
                         board[rows][cols] = playerTwo.coin;
-                        let evalScore = this.minimax(board, depth + 1, true)
-                        board[rows][cols] = ''
+                        let evalScore = this.minimax(board, depth + 1, true)                  
                         minScore = Math.min(evalScore, minScore)
+                        board[rows][cols] = ''
                     }  
                 }
             }
             return minScore;
         }     
     },
-    generateScore : function(){
-        let aiScore = -Infinity;
+    /*
+        Finds the best move similarly to the minimax method
+        except this calls minimax and generates the best 
+        move for the computer to take. If the minimaxScore
+        is greater than the the bestScore than the minimax method
+        has found a better move then the minimizing player.
+        Also passes the best move to the aiCoinPos sub object
+        so the UI can update.
+    */
+    generateBestScore : function(){
+        let bestScore = -Infinity;
         let move = {rows : 0, cols : 0};
         for (let rows = 0; rows < game.board.length; rows++) {
             let newBoard = game.board[rows]
             for (let cols = 0; cols < newBoard.length; cols++) {
                 if(game.board[rows][cols] === ''){
                     game.board[rows][cols] = this.aiCoin;
-                    let minimaxScore = this.minimax(game.board, 10, false);
+                    let minimaxScore = this.minimax(game.board, 0, false);
                     game.board[rows][cols] = ''
-                    if (minimaxScore > aiScore){
-                        aiScore = minimaxScore
+                    if (minimaxScore > bestScore){
+                        bestScore = minimaxScore
                         move = {rows, cols}
                     }
                 }
@@ -233,12 +272,7 @@ const ai = {
         }
         this.aiCoinPos.row = move.rows;
         this.aiCoinPos.col = move.cols 
-        console.log(move)  
         game.placeCoin(move.rows, move.cols, this.aiCoin);
         game.currentPlayer = playerTwo.coin;
     }
 }
-
-
-
-

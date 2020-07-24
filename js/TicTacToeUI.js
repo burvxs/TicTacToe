@@ -1,3 +1,11 @@
+/*
+    Ben Purvis 
+    GA_SEi37
+    7/24/2020
+    TicTacToeUI javascript file containing all the GUI logic including the 
+    game loop, events, one vs one game and the human vs ai game.
+    The UI and game logic are completely seperated from each other.
+*/
 $(function(){  
     const feedbackElement = $("<p id='feedback'></p>")
     const turnElement = $('<p id="turn"></p>')
@@ -40,13 +48,19 @@ $(function(){
     })
     const MIMIC_FPS = 33
 
-    // Game Loop 
+    // Game Loop
     setInterval(onTick, MIMIC_FPS);
 
+    /*  
+        onTick runs constantly, MIMIC_FPS mimics 30 frames per second.
+        Checks if the current player is 'X' and if the AI switch slider
+        is checked. Its constantly checking if a player has won if 
+        winner is not empty the method updates the feed back element
+    */
     function onTick(){
         winner = game.winCheck(game.board);
         if(game.currentPlayer === ai.aiCoin && ai.isAI){
-            ai.generateScore();
+            ai.generateBestScore();
             aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
         }
         if(winner !== ''){
@@ -63,6 +77,10 @@ $(function(){
         }
     }
 })
+/*
+    onMouseEnterItem takes in the board position and toggles that 
+    specific grid item's colour.
+*/
 function onMouseEnterItem(boardPosition){
     if(!isNaN(boardPosition)){
         let row = getRow(boardPosition), col = getColumn(boardPosition)
@@ -73,16 +91,24 @@ function onMouseEnterItem(boardPosition){
         }
     }
 }
+/*
+    startAi clears the board, sets the current player to 
+    the AI coin, starts generating the best score for the ai and then
+    places the coin in the generated spot.
+*/
 function startAi(){
     if(ai.isAI){
         game.clearBoard();
-        console.log(game.board);
         clearBoardUI();
         game.currentPlayer = ai.aiCoin;
-        ai.generateScore();
+        ai.generateBestScore();
         aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);
     }
 }
+/*
+    oneVsOneGame starts the human player vs human player game 
+    triggering each turn on click.
+*/
 function oneVsOneGame(boardPosition){
     winner = game.winCheck(game.board);    
     if(winner === ""){  
@@ -93,6 +119,13 @@ function oneVsOneGame(boardPosition){
         game.turn = !game.turn;                              
     } 
 }
+/*
+    aiGameOnClick starts the human vs computer game
+    then all AI values are repeatedly generated in onTick.
+    this method is pretty much the same as oneVsOneGame,
+    except its not toggling a turn, its sending data back to
+    onTick.
+*/
 function aiGameOnClick(boardPosition){  
     game.changeTurn('O')
     if(game.currentPlayer === playerTwo.coin){
@@ -109,6 +142,11 @@ function aiGameOnClick(boardPosition){
         }
     }
 }
+/*
+    getRow & getCol get the specified intergers from a hovered 
+    grid-item. Splits each of the classes row and col and grabs
+    the interger so it can be placed on the game board.
+*/
 function getRow(boardPos){
     console.log(boardPos)
     if(!isNaN(boardPos)){

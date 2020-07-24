@@ -5,6 +5,11 @@
 This game includes these modes one vs one mode and human vs computer. 
 All played locally. The computer player is using the Minimax algorithm.
 
+
+
+ <img src="assets/OneVsOne.PNG" width="320" height="400">  <img src="assets/HvsAI.PNG" width="320" height="400">
+
+
 **Resources I've used:** 
 https://www.youtube.com/watch?v=trKjYdBASyQ&t=1408s   
 https://www.youtube.com/watch?v=l-hh51ncgDI&t=285s    

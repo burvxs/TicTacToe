@@ -16,6 +16,12 @@ https://www.youtube.com/watch?v=trKjYdBASyQ&t=1408s
 https://www.youtube.com/watch?v=l-hh51ncgDI&t=285s    
 https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/
 
+**Technologies I've used**
+**1.** jQuery   
+**2.** HTML  
+**3**. Javascript  
+**4.** CSS  
+
 **MiniMax Algorithm:** Ⓜ️Ⓜ️  
 The Maximizer = AI.  
 The Minimizer = player.  
@@ -31,6 +37,9 @@ board locations and creating a score for each player (minimizing, maximizing) ba
 on the board state.
 
 **Known bugs**  
-Board elements aren't static positonally they move or wrap  
-when there's a different screen size. There is a media query in the  
-css for mobile.
+**1.** Board elements aren't static positonally they move or wrap  
+       when there's a different screen size.
+**2.** When playing one vs one the board doesn't clear properly.  
+**3.** Needs proper media queries for mobile and smaller resolution
+       screens.
+

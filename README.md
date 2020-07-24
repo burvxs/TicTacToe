@@ -1,7 +1,8 @@
 **Ben Purvis
 7/24/2020**
 
-**TicTacToe**   
+**TicTacToe**  
+https://burvxs.github.io/TicTacToe/
 This game includes these modes one vs one mode and human vs computer. 
 All played locally. The computer player is using the Minimax algorithm.
 

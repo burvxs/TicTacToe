@@ -1,5 +1,5 @@
-Ben Purvis
-7/24/2020
+**Ben Purvis
+7/24/2020**
 
 **TicTacToe**   
 This game includes these modes one vs one mode and human vs computer. 

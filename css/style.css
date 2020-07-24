@@ -152,4 +152,10 @@ input:checked + .slider:before {
         position: relative;
         width : 40%;
     }
+    #ai-switch-text{
+        left : 1072px;
+    }
+    .slider{
+        left : 1165px;
+    }
 }

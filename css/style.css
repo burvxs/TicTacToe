@@ -147,3 +147,8 @@ input:checked + .slider:before {
         font-family: 'Bebas Neue', cursive;
     }
 }
+@media only screen and (max-width: 2072px){
+    #game-container{
+        width : 40%;
+    }
+}

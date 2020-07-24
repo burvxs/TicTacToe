@@ -29,7 +29,7 @@ This method recursively calls it self on the max and min player scanning the
 board locations and creating a score for each player (minimizing, maximizing) based
 on the board state.
 
-**Known bugs**
+**Known bugs**  
 Board elements aren't static positonally they move or wrap  
 when there's a different screen size. There is a media query in the  
 css for mobile.

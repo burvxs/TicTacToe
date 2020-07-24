@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-
+body{
+    background-image: url("../assets/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 #content{
     position: relative;
     bottom : 15px;
@@ -94,7 +98,9 @@ input:checked + .slider:before {
     margin-bottom : -15px;
     font-family: 'Bebas Neue', cursive;
 }
-
+#ai-switch-text{
+    color : white;
+}
 @media only screen and (max-width: 1300px){
     .slider {
         top: 410px;
@@ -104,6 +110,7 @@ input:checked + .slider:before {
     #ai-switch-text{
         top: 390px;
         left: 260px;
+        color : white;
     }
     .grid-item {
         display: inline-block;

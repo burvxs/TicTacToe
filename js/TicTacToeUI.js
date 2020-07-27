@@ -98,8 +98,9 @@ function onMouseEnterItem(boardPosition){
 */
 function startAi(){
     if(ai.isAI){
+        feedbackElement.text("");
         game.clearBoard();
-        clearBoardUI();
+        clearBoardUI();     
         game.currentPlayer = ai.aiCoin;
         ai.generateBestScore();
         aiPlaceElement(ai.aiCoinPos.row, ai.aiCoinPos.col);

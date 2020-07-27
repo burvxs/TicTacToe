@@ -154,10 +154,10 @@ input:checked + .slider:before {
     }
     #ai-switch-text{
         left : 1072px;
-        top: 600px;
+        top: -75px;
     }
     .slider{
         left : 1165px;
-        top: 600px;
+        top: 680px;
     }
 }

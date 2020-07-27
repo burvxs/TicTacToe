@@ -4,7 +4,7 @@
 **TicTacToe**  
 https://burvxs.github.io/TicTacToe/  
 This game includes these modes one vs one mode and human vs computer. 
-All played locally. The computer player is using the Minimax algorithm.
+All played locally.   The computer player is using the Minimax algorithm.
 
 
 
@@ -29,7 +29,7 @@ The Minimizer = player.
 The maximizer tries to get the highest score possible while the
 minimizer does the opposite, getting lowest score. 
 Every board state has a value associated with it. In a state where the
-maximizer has an advantage the score of the board positive value, if the 
+maximizer has an advantage the score of the board will be a positive value, if the 
 minimizer can win in that board state, the score is a negative value.
 
 This method recursively calls it self on the max and min player scanning the 

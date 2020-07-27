@@ -16,7 +16,7 @@ https://www.youtube.com/watch?v=trKjYdBASyQ&t=1408s
 https://www.youtube.com/watch?v=l-hh51ncgDI&t=285s    
 https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/
 
-**Technologies I've used**
+**Technologies I've used**  
 **1.** jQuery   
 **2.** HTML  
 **3**. Javascript  

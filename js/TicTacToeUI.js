@@ -71,6 +71,11 @@ $(function(){
             
             setTimeout(function(){ 
                 startAi(); 
+                if (!ai.isAI){
+                    game.clearBoard();
+                    clearBoardUI();
+                    feedbackElement.text("")
+                }
                 winner = ""                       
             }, 1000)
             
@@ -116,13 +121,7 @@ function oneVsOneGame(boardPosition){
         if(!isNaN(boardPosition)) {
             game.placeCoin(getRow(boardPosition), getColumn(boardPosition), game.getTurn()) 
             placeElement(boardPosition);  
-        }else{
-            setTimeout(function (){  
-                game.clearBoard();
-                clearBoardUI();
-                feedbackElement.text("")
-            }, 2000);
-        }                                                   
+        }                                                  
         game.turn = !game.turn;                              
     }
 }
